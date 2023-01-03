@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,user-scalable=no"
+    />
+  </head>
+  <body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 1rem;
+        color: white;
+        box-sizing: border-box;
+        font-family: Poppins, sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+      }
+      body {
+        background-color: rgb(43, 43, 43);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .card {
+        width: 80%;
+        border-radius: 20px;
+        margin: 0rem 0 auto 0;
+        padding-top: 1rem;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: center;
+      }
+      .messageInfo {
+        font-size: 0.5rem;
+      }
+      .statusCon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .pcContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .status {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        font-size: 1rem;
+        text-align: center;
+        margin-left: 0.5rem;
+        height: 2rem;
+        width: 11.5rem;
+        font-weight: 900;
+        padding: 1rem;
+        transition: all 0.25s ease-in-out;
+      }
+      .off {
+        background-color: #ec1840;
+      }
+      .on {
+        background-color: #379634;
+      }
+      .message {
+        opacity: 0;
+        height: 3rem;
+        width: 17rem;
+        padding: 0.5rem;
+        border: 2px #3457d5 solid;
+        transition: all 0.35s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .displayNone {
+        display: none;
+      }
+      .opacity {
+        opacity: 1;
+      }
+      #hr {
+        height: 1px;
+        background-color: #3457d5;
+        border: none;
+        width: 100%;
+        margin: 1rem 0 1rem 0;
+      }
+      .actions {
+        margin-top: 1rem;
+        display: flex;
+      }
+      button {
+        margin: 0.8rem;
+        height: 3rem;
+        width: 7.5rem;
+        font-size: 1rem;
+        color: white;
+        background-color: rgb(43, 43, 43);
+        border: 2px #7a18ec solid;
+        transition: all 0.2s ease-in;
+      }
+      button:hover {
+        background-color: #7a18ec;
+      }
+
+      #randomColorButton {
+        margin: 0.8rem;
+        height: 3rem;
+        width: 17.5rem;
+        font-size: 1rem;
+        background-color: rgb(43, 43, 43);
+        border: 2px #7a18ec solid;
+        transition: all 0.2s ease-in;
+      }
+      #randomColorButton:hover {
+        background-color: #7a18ec;
+      }
+
+      .ledContainer {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+      }
+      .brightnessSlider {
+        width: 100%;
+        height: 0.25rem;
+        -webkit-appearance: none;
+      }
+      .purple {
+        margin: 1rem 0 2rem 0;
+        width: 17rem;
+        background-color: #7a18ec;
+        background: linear-gradient(
+          90deg,
+          #0e031b 0%,
+          #31085f 50%,
+          #7a18ec 100%
+        );
+      }
+      #redInput {
+        background: linear-gradient(90deg, #000000 0%, #ff0000 100%);
+      }
+      #blueInput {
+        background: linear-gradient(90deg, #000000 0%, #0000ff 100%);
+      }
+      #greenInput {
+        background: linear-gradient(90deg, #000000 0%, #00ff00 100%);
+      }
+      .brightnessSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1rem;
+        height: 1rem;
+        background: white;
+        cursor: pointer;
+      }
+      .brightnessSlider::-moz-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1rem;
+        height: 1rem;
+        background: #3457d5;
+        cursor: pointer;
+      }
+      .colorRowContainer {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+        width: 15rem;
+      }
+      .colorIndicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        margin-right: 0.5rem;
+      }
+      .colorSection {
+        display: flex;
+        flex-direction: row;
+      }
+      .actualColor {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.75rem;
+        height: 6rem;
+        width: 2rem;
+        display: flex;
+        margin-left: 0.5rem;
+        flex-direction: column;
+        writing-mode: vertical-lr;
+        text-orientation: upright;
+      }
+
+      .moto-card {
+        background-color: white;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+        color: black !important;
+        border-radius: 20px;
+        text-decoration: none;
+      }
+      .moto-img {
+        object-fit: contain;
+        width: 100%;
+        padding: 20px;
+        height: 200px;
+      }
+      .moto-title {
+        color: black;
+        padding: 50px 50px 50px 25px;
+        align-self: flex-start;
+      }
+      .moto-price {
+        color: black;
+        align-self: flex-start;
+        padding-left: 25px;
+      }
+      .moto-update {
+        color: black;
+        align-self: center;
+        padding: 25px 5px 0 0;
+        font-size: 0.5rem;
+      }
+    </style>
+    <div class="card">
+      <div class="messageInfo">Info</div>
+      <div class="message" id="message"></div>
+    </div>
+    <hr id="hr" />
+    <div class="card">
+      <div class="pcContainer">
+        <div class="statusCon">
+          <h2 class="title">PC Status</h2>
+          <div class="status" id="pcStatus">Loading...</div>
+        </div>
+        <div class="actions">
+          <button onclick="turnOnPc()" id="turnOnButton">Turn On</button>
+          <button onclick="turnOffPc()" id="turnOffButton">Turn Off</button>
+        </div>
+      </div>
+    </div>
+    <hr id="hr" />
+    <div class="card">
+      <div class="ledContainer">
+        <div class="statusCon">
+          <h2 class="title">LED Status</h2>
+          <div class="status" id="ledStatus">Loading...</div>
+        </div>
+        <div class="actions">
+          <button onclick="turnOnLed()">Turn On</button>
+          <button onclick="turnOffLed()">Turn Off</button>
+        </div>
+        <div class="messageInfo">Brightness</div>
+        <input
+          type="range"
+          min="1"
+          max="100"
+          value="50"
+          class="brightnessSlider purple"
+          id="brightnessSlider"
+          oninput="slider()"
+          onChange="brightnessChangeHandler()"
+        />
+      </div>
+      <div class="messageInfo">Color</div>
+
+      <div class="colorSection" disabled="true">
+        <div class="colorContaier">
+          <div class="colorRowContainer">
+            <div class="colorIndicator" id="redIndicatorLabel">R</div>
+            <input
+              type="range"
+              class="brightnessSlider"
+              id="redInput"
+              min="0"
+              max="255"
+              oninput="slider()"
+              onchange="colorChangeHandler(this)"
+            />
+          </div>
+          <div class="colorRowContainer">
+            <div class="colorIndicator" id="greenIndicatorLabel">G</div>
+            <input
+              type="range"
+              class="brightnessSlider"
+              id="greenInput"
+              min="0"
+              max="255"
+              oninput="slider()"
+              onchange="colorChangeHandler(this)"
+            />
+          </div>
+          <div class="colorRowContainer">
+            <div class="colorIndicator" id="blueIndicatorLabel">B</div>
+            <input
+              type="range"
+              class="brightnessSlider"
+              id="blueInput"
+              min="0"
+              max="255"
+              oninput="slider()"
+              onchange="colorChangeHandler(this)"
+            />
+          </div>
+        </div>
+        <div class="actualColor" id="actualColor">COLOR</div>
+      </div>
+      <button id="randomColorButton" onclick="randomColorHandler()">
+        Random Color
+      </button>
+      <div style="display: flex; flex-direction: column; gap: 10px" id="motos">
+        <a class="moto-card" target="_blank">
+          <img src="" alt="" class="moto-img" />
+          <div class="moto-title"></div>
+          <div class="moto-price"></div>
+          <div class="moto-update"></div>
+        </a>
+        <a class="moto-card" target="_blank">
+          <img src="" alt="" class="moto-img" />
+          <div class="moto-title"></div>
+          <div class="moto-price"></div>
+          <div class="moto-update"></div>
+        </a>
+        <a class="moto-card" target="_blank">
+          <img src="" alt="" class="moto-img" />
+          <div class="moto-title"></div>
+          <div class="moto-price"></div>
+          <div class="moto-update"></div>
+        </a>
+      </div>
+    </div>
+    <script>
+      let DEVICE;
+      let MODEL;
+      let isLedOn, confirm;
+      let RGB = [0, 0, 0];
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const statusDiv = document.getElementById("pcStatus");
+      const ledStatusDiv = document.getElementById("ledStatus");
+
+      function toggleOpacity() {
+        const messageDiv = document.getElementById("message");
+        if (messageDiv.classList.contains("opacity")) {
+          messageDiv.classList.remove("opacity");
+        } else {
+          messageDiv.classList.add("opacity");
+        }
+      }
+      function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex.toUpperCase() : hex.toUpperCase();
+      }
+
+      function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }
+
+      function invertColor(hex, bw) {
+        if (hex.indexOf("#") === 0) {
+          hex = hex.slice(1);
+        }
+        // convert 3-digit hex to 6-digits.
+        if (hex.length === 3) {
+          hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+        if (hex.length !== 6) {
+          throw new Error("Invalid HEX color.");
+        }
+        var r = parseInt(hex.slice(0, 2), 16),
+          g = parseInt(hex.slice(2, 4), 16),
+          b = parseInt(hex.slice(4, 6), 16);
+        if (bw) {
+          // https://stackoverflow.com/a/3943023/112731
+          return r * 0.299 + g * 0.587 + b * 0.114 > 186
+            ? "#000000"
+            : "#FFFFFF";
+        }
+        // invert color components
+        r = (255 - r).toString(16);
+        g = (255 - g).toString(16);
+        b = (255 - b).toString(16);
+        // pad each with zeros and return
+        return "#" + padZero(r) + padZero(g) + padZero(b);
+      }
+
+      async function setMessage(message) {
+        document.getElementById("message").textContent = message;
+        toggleOpacity();
+        await sleep(1000);
+        toggleOpacity();
+      }
+      function setLoading(div) {
+        div.style.transition = "none";
+        div.textContent = "Loading...";
+      }
+      function unsetLoading(div) {
+        div.style.transition = "all 0.25s ease-in-out";
+      }
+
+      async function fetchStatus() {
+        const resp = await fetch("/status");
+        if (resp.ok) {
+          const pcStatus = await resp.json();
+          if (pcStatus.status) {
+            if (statusDiv.classList.contains("off"))
+              statusDiv.classList.remove("off");
+            statusDiv.classList.add("on");
+            statusDiv.textContent = "on";
+          } else {
+            if (statusDiv.classList.contains("on"))
+              statusDiv.classList.remove("on");
+            statusDiv.classList.add("off");
+            statusDiv.textContent = "off";
+          }
+        }
+      }
+      async function resetTurnOffButton() {
+        document.getElementById("turnOnButton").style.display = "block";
+        await sleep(1);
+        document.getElementById("turnOffButton").textContent = "turn off";
+        document.getElementById("turnOnButton").style.width = "7.5rem";
+        document.getElementById("turnOffButton").style.width = "7.5rem";
+        await sleep(200);
+        document.getElementById("turnOnButton").textContent = "turn on";
+      }
+
+      async function turnOnPc() {
+        window.navigator.vibrate(50);
+        const resp = await fetch("/on");
+        if (resp.ok) {
+          await fetchStatus();
+          setMessage("PC turned on");
+        }
+      }
+
+      async function turnOffPc() {
+        window.navigator.vibrate(50);
+        if (!confirm) {
+          document.getElementById("turnOnButton").textContent = "";
+          document.getElementById("turnOnButton").style.width = "0rem";
+          await sleep(200);
+          document.getElementById("turnOnButton").style.display = "none";
+          document.getElementById("turnOffButton").style.width = "17rem";
+          await sleep(200);
+          document.getElementById("turnOffButton").textContent =
+            "are you sure?";
+          confirm = true;
+          await sleep(3000);
+          if (confirm) {
+            confirm = false;
+            await resetTurnOffButton();
+          }
+        } else if (confirm) {
+          await resetTurnOffButton();
+
+          confirm = false;
+          const resp = await fetch("/off");
+          if (resp.ok) {
+            await fetchStatus();
+            setMessage("PC turned Off");
+          }
+        }
+      }
+
+      function updateLedStatus() {
+        ledStatusDiv.style.color = "white";
+        if (isLedOn === "on") {
+          ledStatusDiv.textContent = "ON";
+          if (ledStatusDiv.classList.contains("off"))
+            ledStatusDiv.classList.remove("off");
+          ledStatusDiv.classList.add("on");
+          ledStatusDiv.classList.add("opacity");
+        } else {
+          ledStatusDiv.textContent = "off";
+          if (ledStatusDiv.classList.contains("on"))
+            ledStatusDiv.classList.remove("on");
+          ledStatusDiv.classList.add("off");
+          ledStatusDiv.classList.add("opacity");
+        }
+      }
+      async function turnOnLed() {
+        setLoading(ledStatusDiv);
+        window.navigator.vibrate(50);
+        headers = {
+          "content-type": "application/json",
+        };
+        body = {
+          device: DEVICE,
+          model: MODEL,
+          cmd: {
+            name: "turn",
+            value: "on",
+          },
+        };
+        const resp = await fetch("/api/deviceControl", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.status && resp.status == 200) {
+          isLedOn = "on";
+          unsetLoading(ledStatusDiv);
+          updateLedStatus();
+          setMessage("LED turned on");
+        } else {
+          setMessage("something went wrong");
+        }
+      }
+
+      async function turnOffLed() {
+        setLoading(ledStatusDiv);
+        window.navigator.vibrate(50);
+        headers = {
+          "content-type": "application/json",
+        };
+        body = {
+          device: DEVICE,
+          model: MODEL,
+          cmd: {
+            name: "turn",
+            value: "off",
+          },
+        };
+        const resp = await fetch("/api/deviceControl", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.status && resp.status == 200) {
+          isLedOn = "off";
+          unsetLoading(ledStatusDiv);
+          updateLedStatus();
+          setMessage("LED turned off");
+        } else {
+          setMessage("something went wrong");
+        }
+      }
+      async function brightnessChangeHandler() {
+        setLoading(ledStatusDiv);
+        headers = {
+          "content-type": "application/json",
+        };
+        body = {
+          device: DEVICE,
+          model: MODEL,
+          cmd: {
+            name: "brightness",
+            value: parseInt(document.getElementById("brightnessSlider").value),
+          },
+        };
+        const resp = await fetch("/api/deviceControl", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.status && resp.status == 200) {
+          isLedOn = "on";
+          unsetLoading(ledStatusDiv);
+          updateLedStatus();
+          setMessage("LED brightness changed");
+        } else {
+          setMessage("something went wrong");
+        }
+      }
+      function updateIndicators() {
+        document.getElementById(
+          "redIndicatorLabel"
+        ).style.backgroundColor = `rgb(${RGB[0]},0,0)`;
+        document.getElementById(
+          "greenIndicatorLabel"
+        ).style.backgroundColor = `rgb(0,${RGB[1]},0)`;
+        document.getElementById(
+          "blueIndicatorLabel"
+        ).style.backgroundColor = `rgb(0,0,${RGB[2]})`;
+        document.getElementById("redInput").value = RGB[0];
+        document.getElementById("greenInput").value = RGB[1];
+        document.getElementById("blueInput").value = RGB[2];
+        document.getElementById(
+          "actualColor"
+        ).style.backgroundColor = `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
+        document.getElementById("actualColor").style.color = invertColor(
+          rgbToHex(parseInt(RGB[0]), parseInt(RGB[1]), parseInt(RGB[2])),
+          true
+        );
+      }
+
+      async function colorChangeHandler(element) {
+        setLoading(ledStatusDiv);
+        const colorId = element.id;
+        if (colorId === "redInput") {
+          RGB[0] = element.value;
+        } else if (colorId === "greenInput") {
+          RGB[1] = element.value;
+        } else {
+          RGB[2] = element.value;
+        }
+        updateIndicators();
+
+        headers = {
+          "content-type": "application/json",
+        };
+        body = {
+          device: DEVICE,
+          model: MODEL,
+          cmd: {
+            name: "color",
+            value: {
+              r: parseInt(RGB[0]),
+              g: parseInt(RGB[1]),
+              b: parseInt(RGB[2]),
+            },
+          },
+        };
+        const resp = await fetch("/api/deviceControl", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.status && resp.status == 200) {
+          isLedOn = "on";
+          unsetLoading(ledStatusDiv);
+          updateLedStatus();
+          setMessage("LED color changed");
+        } else {
+          setMessage("something went wrong");
+        }
+      }
+
+      async function randomColorHandler() {
+        setLoading(ledStatusDiv);
+
+        RGB[0] = "" + Math.random() * 256;
+        RGB[1] = "" + Math.random() * 256;
+        RGB[2] = "" + Math.random() * 256;
+        updateIndicators();
+        headers = {
+          "content-type": "application/json",
+        };
+        body = {
+          device: DEVICE,
+          model: MODEL,
+          cmd: {
+            name: "color",
+            value: {
+              r: parseInt(RGB[0]),
+              g: parseInt(RGB[1]),
+              b: parseInt(RGB[2]),
+            },
+          },
+        };
+        const resp = await fetch("/api/deviceControl", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(body),
+        });
+        if (resp.status && resp.status == 200) {
+          isLedOn = "on";
+          unsetLoading(ledStatusDiv);
+          updateLedStatus();
+          setMessage("LED color changed");
+        } else {
+          setMessage("something went wrong");
+        }
+      }
+
+      function slider() {
+        window.navigator.vibrate(10);
+      }
+
+      (async function () {
+        let resp = await fetch("/api/motos");
+        if (resp.status && resp.status == 200) {
+          let data = await resp.json();
+          for (let i = 0; i < data.length; i++) {
+            document.getElementById("motos").childNodes[
+              i + i + 1
+            ].childNodes[1].src = data[i].img;
+            document.getElementById("motos").childNodes[
+              i + i + 1
+            ].childNodes[3].innerText = data[i].data.title;
+            document.getElementById("motos").childNodes[
+              i + i + 1
+            ].childNodes[5].innerText = data[i].data.price;
+            document.getElementById("motos").childNodes[
+              i + i + 1
+            ].childNodes[7].innerText = data[i].timeStamp;
+            document.getElementById("motos").childNodes[i + i + 1].href =
+              data[i].url;
+          }
+        }
+
+        resp = await fetch("/api/getDevices");
+        if (resp.status && resp.status == 200) {
+          let data = await resp.json();
+          DEVICE = data.data[0].device;
+          MODEL = data.data[0].model;
+
+          resp = await fetch(
+            "/api/getDeviceState?device=" + DEVICE + "&model=" + MODEL
+          );
+          if (resp.status && resp.status == 200) {
+            data = await resp.json();
+            if (data.data.properties && data.data.properties[0].online) {
+              isLedOn = data.data.properties[1].powerState;
+              RGB[0] = data.data.properties[3].color.r;
+              RGB[1] = data.data.properties[3].color.g;
+              RGB[2] = data.data.properties[3].color.b;
+
+              updateIndicators();
+              document.getElementById("brightnessSlider").value =
+                data.data.properties[2].brightness;
+              updateLedStatus();
+            }
+          }
+        }
+
+        while (true) {
+          await fetchStatus();
+          await sleep(1000);
+        }
+      })();
+    </script>
+  </body>
+</html>

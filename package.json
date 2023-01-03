@@ -1,0 +1,24 @@
+{
+  "name": "shortener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.18.2",
+    "https": "^1.0.0",
+    "mongodb": "^4.1.4",
+    "node-fetch": "^2.6.7",
+    "ping": "^0.4.2",
+    "puppeteer": "^14.2.1",
+    "serve-favicon": "^2.5.0"
+  }
+}
