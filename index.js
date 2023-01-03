@@ -54,9 +54,9 @@ async function priceTitle(url, page) {
 
       title = document
         .querySelector(
-          'div[class="background-cover featured-image text-center text-white"]'
+          "#app > div.background-cover.featured-image.text-center.text-white > h2"
         )
-        .childNodes[0].innerText.split("\n")[0];
+        .textContent.trim();
     } else if (url.startsWith("https://sym")) {
       price = document.querySelector('div[class="avia_textblock"]')
         .childNodes[0].innerText;
