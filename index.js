@@ -11,7 +11,7 @@ var ping = require("ping");
 const bodyParser = require("body-parser");
 const puppeteer = require("puppeteer");
 const IP_INTERVAL_UPDATE = 1000 * 60 * 2.5; //every 5 minutes update ip
-const MOTO_INTERVAL = 1000 * 60 * 15;
+const MOTO_INTERVAL = 1000 * 60 * 30;
 
 const windowOS = true;
 
@@ -34,17 +34,44 @@ const sleep = (ms) => {
 
 let pcStatus = false;
 const GOOVE_API_KEY = process.env.GOOVE_API_KEY;
+const settings = {
+  headless: false,
+  devtools: false,
+  defaultViewport: false,
+  executablePath: windowOS ? "" : "/usr/bin/chromium-browser",
+  userDataDir: "./tmp",
+  args: [
+    "--disable-canvas-aa",
+    "--disable-2d-canvas-clip-aa",
+    "--disable-gl-drawing-for-tests",
+    "--disable-dev-shm-usage",
+    "--no-zygote",
+    "--use-gl=swiftshader",
+    "--enable-webgl",
+    "--hide-scrollbars",
+    "--mute-audio",
+    "--no-first-run",
+    "--disable-infobars",
+    "--disable-breakpad",
+
+    "--window-size=1280,1024",
+    "--user-data-dir=./chromeData",
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+  ],
+};
 
 //
 //
 //
 //
 
-async function priceTitle(url, page) {
+async function priceTitle(url, browser) {
+  const page = await browser.newPage();
+
   await page.goto(url, { timeout: 0 });
 
   const infos = await page.evaluate((url) => {
-    console.log(url);
     let price, title;
 
     if (url.startsWith("https://kym")) {
@@ -52,11 +79,17 @@ async function priceTitle(url, page) {
         'span[class="d-block d-lg-inline-block font-weight-bolder font-36"]'
       ).innerText;
 
+      // title = document
+      //   .querySelector(
+      //     "#app > div.background-cover.featured-image.text-center.text-white > h2"
+      //   )
+      //   .textContent.trim();
+
       title = document
         .querySelector(
           "#app > div.background-cover.featured-image.text-center.text-white > h2"
         )
-        .textContent.trim();
+        .childNodes[0].textContent.trim();
     } else if (url.startsWith("https://sym")) {
       price = document.querySelector('div[class="avia_textblock"]')
         .childNodes[0].innerText;
@@ -75,72 +108,48 @@ async function priceTitle(url, page) {
     }
     return { title, price };
   }, url);
+  await page.close();
   return infos;
 }
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    devtools: false,
-    defaultViewport: false,
-    executablePath: windowOS ? "" : "/usr/bin/chromium-browser",
-    userDataDir: "./tmp",
-    args: [
-      "--disable-canvas-aa",
-      "--disable-2d-canvas-clip-aa",
-      "--disable-gl-drawing-for-tests",
-      "--disable-dev-shm-usage",
-      "--no-zygote",
-      "--use-gl=swiftshader",
-      "--enable-webgl",
-      "--hide-scrollbars",
-      "--mute-audio",
-      "--no-first-run",
-      "--disable-infobars",
-      "--disable-breakpad",
-
-      "--window-size=1280,1024",
-      "--user-data-dir=./chromeData",
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-    ],
-  });
-  const page = await browser.newPage();
+  const browser = await puppeteer.launch(settings);
   try {
     infos.push({
-      data: await priceTitle(HONDA_URL, page),
+      data: await priceTitle(HONDA_URL, browser),
       timeStamp: new Date().toLocaleString(),
       img: "/images/honda.jpg",
       url: HONDA_URL,
     });
     infos.push({
-      data: await priceTitle(SYM_URL, page),
+      data: await priceTitle(SYM_URL, browser),
       timeStamp: new Date().toLocaleString(),
       img: "/images/sym.jpg",
       url: SYM_URL,
     });
     infos.push({
-      data: await priceTitle(KYMCO_URL, page),
+      data: await priceTitle(KYMCO_URL, browser),
       timeStamp: new Date().toLocaleString(),
       img: "/images/kymco.jpg",
       url: KYMCO_URL,
     });
-    console.log(infos[2]);
   } catch (err) {}
 
+  await browser.close();
   do {
     await sleep(MOTO_INTERVAL);
+    const browser = await puppeteer.launch(settings);
+
     try {
-      infos[0].data = await priceTitle(HONDA_URL, page);
+      infos[0].data = await priceTitle(HONDA_URL, browser);
       infos[0].timeStamp = new Date().toLocaleString();
-      infos[1].data = await priceTitle(SYM_URL, page);
+      infos[1].data = await priceTitle(SYM_URL, browser);
       infos[1].timeStamp = new Date().toLocaleString();
-      infos[2].data = await priceTitle(KYMCO_URL, page);
+      infos[2].data = await priceTitle(KYMCO_URL, browser);
       infos[2].timeStamp = new Date().toLocaleString();
     } catch (err) {}
+    await browser.close();
   } while (true);
-
-  await browser.close();
 })();
 
 //
@@ -159,9 +168,7 @@ app.get("/status", async (req, res) => {
 });
 
 app.get("/on", async (req, res) => {
-  exec(`sudo ${__dirname}/s.sh`, (error, stdout, stderr) => {
-    console.log(`stdout: ${stdout}`);
-  });
+  exec(`sudo ${__dirname}/s.sh`, (error, stdout, stderr) => {});
   res.send("ok");
 });
 
@@ -177,7 +184,6 @@ app.get("/api/getDevices", async (req, res) => {
   });
   if (resp.status && resp.status == 200) {
     const data = await resp.json();
-    console.log(data.data.devices);
     res.json({
       status: 200,
       data: data.data.devices.map((device) => {
@@ -193,7 +199,6 @@ app.get("/api/getDeviceState", async (req, res) => {
   const device = req.query.device;
   const model = req.query.model;
 
-  console.log(device, model);
   const header = { "Govee-API-Key": GOOVE_API_KEY };
   const resp = await fetch(
     "https://developer-api.govee.com/v1/devices/state?device=" +
@@ -243,5 +248,5 @@ app.get("/api/motos", async (req, res) => {
 });
 
 http.createServer({}, app).listen(3000, async () => {
-  console.log("server is running");
+  console.log("server is running on port 3000");
 });
